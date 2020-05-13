@@ -1,5 +1,7 @@
 #!/bin/ksh -x
 
+
+
 ########## config.base ##########
 # Common to all steps
 
@@ -12,7 +14,10 @@ export machine="@MACHINE@"
 export RUN_ENVIR="emc"
 
 # Account, queue, etc.
-export ACCOUNT="@ACCOUNT@"
+# Edited by liaofan on 2020.04.12
+#export ACCOUNT="@ACCOUNT@"
+export ACCOUNT="rtrr"
+
 export QUEUE="@QUEUE@"
 export QUEUE_ARCH="@QUEUE_ARCH@"
 
@@ -36,17 +41,28 @@ export DMPDIR="@DMPDIR@"
 export RTMFIX=$CRTM_FIX
 
 # USER specific paths
-export HOMEDIR="@HOMEDIR@"
-export STMP="@STMP@"
-export PTMP="@PTMP@"
-export NOSCRUB="@NOSCRUB@"
+# Edited by liaofan on 2020.04.12
+#export HOMEDIR="@HOMEDIR@"
+#export STMP="@STMP@"
+#export PTMP="@PTMP@"
+#export NOSCRUB="@NOSCRUB@"
+export HOMEDIR="/scratch1/BMC/wrfruc/llin/tasks/200201_FV3GFS_v16_EFSOI/NCEPDEV/global/$USER"
+export STMP="/scratch1/BMC/wrfruc/llin/tasks/200201_FV3GFS_v16_EFSOI/NCEPDEV/stmp2/$USER"
+export PTMP="/scratch1/BMC/wrfruc/llin/tasks/200201_FV3GFS_v16_EFSOI/NCEPDEV/stmp4/$USER"
+export NOSCRUB="$HOMEDIR"
+
 
 # Base directories for various builds
 export BASE_GIT="@BASE_GIT@"
 export BASE_SVN="@BASE_SVN@"
 
 # Toggle to turn on/off GFS downstream processing.
-export DO_BUFRSND="YES"
+
+# Edited by liaofan on 2020.05.11 
+# Suggested by Kate
+#export DO_BUFRSND="YES"
+export DO_BUFRSND="NO"
+
 export DO_GEMPAK="NO"
 export DO_AWIPS="NO"
 
@@ -142,10 +158,16 @@ export gfs_cyc=@gfs_cyc@ # 0: no GFS cycle, 1: 00Z only, 2: 00Z and 12Z only, 4:
 # GFS output and frequency
 export FHMIN_GFS=0
 
-export FHMAX_GFS_00=384
-export FHMAX_GFS_06=384
-export FHMAX_GFS_12=384
-export FHMAX_GFS_18=384
+# GFS forecast lead times, edited by liaofan on 2020.04.21
+#export FHMAX_GFS_00=384
+#export FHMAX_GFS_06=384
+#export FHMAX_GFS_12=384
+#export FHMAX_GFS_18=384
+export FHMAX_GFS_00=72
+export FHMAX_GFS_06=72
+export FHMAX_GFS_12=72
+export FHMAX_GFS_18=72
+
 export FHMAX_GFS=$(eval echo \${FHMAX_GFS_$cyc})
 
 export FHOUT_GFS=3
@@ -194,7 +216,15 @@ export DO_GLDAS=YES
 export gldas_cyc=00
 
 # run wave component
-export DO_WAVE=YES
+# Edited by liaofan on 2020.04.12
+# suggested by Kate
+#export DO_WAVE=YES
+export DO_WAVE=NO
+
+# === Edited by liaofan for efsoi on 2020.05.04 ===
+export DO_EFSOI=YES
+# =================================================
+
 export WAVE_CDUMP="gdas"
 
 # Microphysics Options: 99-ZhaoCarr, 8-Thompson; 6-WSM6, 10-MG, 11-GFDL

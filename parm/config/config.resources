@@ -263,6 +263,37 @@ elif [ $step = "eupd" ]; then
         export memory_eupd="3072M"
     fi
 
+# ==== added by liaofan on 2020.05.06 =========
+elif [ $step = "eupdfsoi" ]; then
+
+    export wtime_eupdfsoi="06:00:00"
+
+    if [ $CASE = "C768" ]; then
+      export npe_eupdfsoi=540
+      export nth_eupdfsoi=6
+      if [[ "$machine" = "WCOSS_DELL_P3" ]]; then
+        export nth_eupdfsoi=9
+      fi
+    elif [ $CASE = "C384" ]; then
+      export npe_eupdfsoi=270
+      export nth_eupdfsoi=2
+      if [[ "$machine" = "WCOSS_DELL_P3" ]]; then
+        export nth_eupdfsoi=9
+      fi
+      if [[ "$machine" = "HERA" ]]; then
+        export npe_eupdfsoi=84
+        export nth_eupdfsoi=10
+      fi
+    elif [ $CASE = "C192" -o $CASE = "C96" -o $CASE = "C48" ]; then
+      export npe_eupdfsoi=42
+      export nth_eupdfsoi=2
+    fi
+    export npe_node_eupdfsoi=$(echo "$npe_node_max / $nth_eupdfsoi" | bc)
+    if [[ "$machine" == "WCOSS_C" ]]; then
+        export memory_eupdfsoi="3072M"
+    fi
+# =============================================
+
 elif [ $step = "ecen" ]; then
 
     export wtime_ecen="00:30:00"

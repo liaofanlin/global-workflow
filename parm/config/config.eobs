@@ -10,7 +10,11 @@ echo "BEGIN: config.eobs"
 
 export INVOBSSH="$HOMEgsi/scripts/exglobal_innovate_obs_fv3gfs.sh.ecf"
 export ENKFINVOBSSH="$HOMEgsi/scripts/exglobal_enkf_innovate_obs_fv3gfs.sh.ecf"
-export NMEM_EOMGGRP=8  
+
+# Edited by liaofan on 2020.04.12
+# export NMEM_EOMGGRP=8
+export NMEM_EOMGGRP=6
+
 export RERUN_EOMGGRP="YES"
 export npe_gsi=$npe_eobs
 
@@ -22,8 +26,12 @@ if [ $LEVS = "128" ]; then
    export SETUP_INVOBS="gpstop=55,nsig_ext=56,"
 fi
 
+# Edited by liaofan on 2020.04.12
+#export USE_RADSTAT="NO" # This can be only used when bias correction is non-zero.
+export USE_RADSTAT="YES"
 
-export USE_RADSTAT="NO" # This can be only used when bias correction is non-zero.
+
+
 export GENDIAG="YES"    # Diagnostic files must be created for EnKF
 
 export lobsdiag_forenkf=".true."  # write out jacobians from eobs

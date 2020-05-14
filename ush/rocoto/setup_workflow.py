@@ -64,6 +64,11 @@ def main():
     #steps = steps + wav_steps_gempak if _base.get('DO_GEMPAK', 'NO') == 'YES' else steps
     #steps = steps + wav_steps_awips if _base.get('DO_AWIPS', 'NO') == 'YES' else steps
 
+    # ==== added by liaofan for efsoi on 2020.05.04 =====
+    efsoi_steps = ['eupdfsoi']
+    steps = steps + efsoi_steps if _base.get('DO_EFSOI','NO') == 'YES' else steps
+    # ===================================================
+
     dict_configs = wfu.source_configs(configs, steps)
 
     # Check and set gfs_cyc specific variables
@@ -306,11 +311,23 @@ def get_hyb_resources(dict_configs):
 
     dict_resources = OrderedDict()
 
+    # === liaofan on 2020.05.06 ==========================
+    do_efsoi = base.get('DO_EFSOI', 'NO').upper()
+
     # These tasks can be run in either or both cycles
     if lobsdiag_forenkf in ['.T.', '.TRUE.']:
-        tasks1 = ['eobs', 'ediag', 'eupd']
+
+        if do_efsoi in ['Y', 'YES']:
+            tasks1 = ['eobs', 'ediag', 'eupd','eupdfsoi']
+        else:
+            tasks1 = ['eobs', 'ediag', 'eupd']
+
     else:
-        tasks1 = ['eobs', 'eomg', 'eupd']
+        if do_efsoi in ['Y', 'YES']:
+            tasks1 = ['eobs', 'eomg', 'eupd','eupdfsoi']
+        else:
+            tasks1 = ['eobs', 'eomg', 'eupd']
+    # =====================================================
 
     if eupd_cyc in ['BOTH']:
         cdumps = ['gfs', 'gdas']
@@ -396,6 +413,10 @@ def get_gdasgfs_tasks(dict_configs, cdump='gdas'):
     do_wave_cdump = base.get('WAVE_CDUMP', 'BOTH').upper()
     dumpsuffix = base.get('DUMP_SUFFIX', '')
     gridsuffix = base.get('SUFFIX', '')
+
+    # ==== added by liaofan for efsoi on 2020.05.04 =====
+    do_efsoi = base.get('DO_EFSOI', 'NO').upper()
+    # =================================================== 
 
     dict_tasks = OrderedDict()
 
@@ -805,6 +826,24 @@ def get_hyb_tasks(dict_configs, cycledef='enkf'):
 
         dict_tasks['%seupd' % cdump] = task
 
+        # === liaofan on 2020.05.06 =======================
+        # # eupdfsoi
+        do_efsoi = base.get('DO_EFSOI', 'NO').upper()
+
+        if do_efsoi in ['Y', 'YES']:
+
+            deps = []
+            if lobsdiag_forenkf in ['.F.', '.FALSE.']:
+                dep_dict = {'type': 'metatask', 'name': '%seomn' % cdump}
+            else:
+                dep_dict = {'type': 'task', 'name': '%sediag' % cdump}
+            deps.append(rocoto.add_dependency(dep_dict))
+            dependencies = rocoto.create_dependency(dep=deps)
+            task = wfu.create_wf_task('eupdfsoi', cdump=cdump, envar=envars1, dependency=dependencies, cycledef=cycledef)
+
+            dict_tasks['%seupdfsoi' % cdump] = task
+        # ===================================================
+
     # All hybrid tasks beyond this point are always executed in the GDAS cycle
     cdump = 'gdas'
     envar_cdump = rocoto.create_envar(name='CDUMP', value='%s' % cdump)
@@ -1098,7 +1137,17 @@ def create_xml(dict_configs):
         dict_hyb_tasks = get_hyb_tasks(dict_configs)
 
         # Removes <memory>&MEMORY_JOB_DUMP</memory> post mortem from hyb tasks
-        hyp_tasks = {'gdaseobs':'gdaseobs', 'gdasediag':'gdasediag', 'gdaseomg':'gdaseomn', 'gdaseupd':'gdaseupd','gdasecen':'gdasecmn','gdasesfc':'gdasesfc','gdasefcs':'gdasefmn','gdasepos':'gdasepmn','gdasearc':'gdaseamn'}
+        # === liaofan on 2020.05.06 =======================
+        # # eupdfsoi
+        do_efsoi = base.get('DO_EFSOI', 'NO').upper()
+    
+        if do_efsoi in ['Y', 'YES']:
+            hyp_tasks = {'gdaseobs':'gdaseobs', 'gdasediag':'gdasediag', 'gdaseomg':'gdaseomn', 'gdaseupd':'gdaseupd','gdaseupdfsoi':'gdaseupdfsoi','gdasecen':'gdasecmn','gdasesfc':'gdasesfc','gdasefcs':'gdasefmn','gdasepos':'gdasepmn','gdasearc':'gdaseamn'}
+
+        else:
+            hyp_tasks = {'gdaseobs':'gdaseobs', 'gdasediag':'gdasediag', 'gdaseomg':'gdaseomn', 'gdaseupd':'gdaseupd','gdasecen':'gdasecmn','gdasesfc':'gdasesfc','gdasefcs':'gdasefmn','gdasepos':'gdasepmn','gdasearc':'gdaseamn'}
+        # ==================================================
+
         for each_task, each_resource_string in dict_hyb_resources.iteritems():
             #print each_task,hyp_tasks[each_task]
             #print dict_hyb_tasks[hyp_tasks[each_task]]

@@ -91,10 +91,18 @@ export GSUFFIX=${GSUFFIX:-$SUFFIX}
 #export COMOUT_ANL_ENS="$ROTDIR/enkf$CDUMP.$PDY/$cyc"
 
 # Copy enkfgdas data on the current cycle to fsoigdas folder!
-#   see rn200502.  do not copy the folders of each member, which 
-#   were created in eupd
+#   - see rn200502
+#   - Do not copy the folders of each member, which were created in eupd
+#   - Copy only files created before gdaseupd
 mkdir -p $ROTDIR/fsoigdas.$PDY/$cyc
-cp -u -ir $ROTDIR/enkfgdas.$PDY/$cyc/gdas.* $ROTDIR/fsoigdas.$PDY/$cyc/
+cp -u -ir $ROTDIR/enkfgdas.$PDY/$cyc/gdas.*.radstat.*  $ROTDIR/fsoigdas.$PDY/$cyc/
+cp -u -ir $ROTDIR/enkfgdas.$PDY/$cyc/gdas.*.cnvstat.*  $ROTDIR/fsoigdas.$PDY/$cyc/
+cp -u -ir $ROTDIR/enkfgdas.$PDY/$cyc/gdas.*.oznstat.*  $ROTDIR/fsoigdas.$PDY/$cyc/
+cp -u -ir $ROTDIR/enkfgdas.$PDY/$cyc/gdas.*.loginc.txt $ROTDIR/fsoigdas.$PDY/$cyc/
+cp -u -ir $ROTDIR/enkfgdas.$PDY/$cyc/gdas.*.obsinput.* $ROTDIR/fsoigdas.$PDY/$cyc/
+cp -u -ir $ROTDIR/enkfgdas.$PDY/$cyc/gdas.*.gsistat.*  $ROTDIR/fsoigdas.$PDY/$cyc/
+cp -u -ir $ROTDIR/enkfgdas.$PDY/$cyc/gdas.*.abias*     $ROTDIR/fsoigdas.$PDY/$cyc/
+cp -u -ir $ROTDIR/enkfgdas.$PDY/$cyc/gdas.*.gsidiags   $ROTDIR/fsoigdas.$PDY/$cyc/
 
 # The first guess from enkfgdas
 export COMIN_GES_ENS="$ROTDIR/enkfgdas.$gPDY/$gcyc"

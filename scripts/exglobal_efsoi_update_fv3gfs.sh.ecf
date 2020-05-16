@@ -1,13 +1,14 @@
 #!/bin/ksh
 ################################################################################
 ####  UNIX Script Documentation Block
-#                      .                                             .
-# Script name:         exglobal_enkf_update_fv3gfs.sh.ecf
-# Script description:  Make global_enkf update
+#                      .            
+#                                  .
+# Script name:         exglobal_efsoi_update_fv3gfs.sh.ecf
+# Script description:  modified from exglobal_enkf_update_fv3gfs.sh.ecf
 #
 # Author:        Rahul Mahajan      Org: NCEP/EMC     Date: 2017-03-02
-#
-# Abstract: This script runs the global_enkf update
+# 
+# Abstract: This script runs the global_efsoi update
 #
 # $Id$
 #
@@ -198,6 +199,7 @@ else
       tar -xvf $fname
    done
 fi
+
 nfhrs=`echo $IAUFHRS_ENKF | sed 's/,/ /g'`
 for imem in $(seq 1 $NMEM_ENKF); do
    memchar="mem"$(printf %03i $imem)
@@ -262,6 +264,13 @@ if [ $USE_CFP = "YES" ]; then
       $ERRSCRIPT || exit 2
    fi
 fi
+
+# ===== liaofan on 2020.05.15 ================================
+# Keep osense data in comrot
+$NLN $COMOUT_ANL_ENS/osense_${CDATE}.dat  osense_${CDATE}.dat
+# ============================================================
+
+
 
 ################################################################################
 # liaofan on 2020.05.06

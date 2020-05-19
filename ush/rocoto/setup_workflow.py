@@ -65,7 +65,7 @@ def main():
     #steps = steps + wav_steps_awips if _base.get('DO_AWIPS', 'NO') == 'YES' else steps
 
     # ==== added by liaofan for efsoi on 2020.05.04 =====
-    efsoi_steps = ['eupdfsoi']
+    efsoi_steps = ['eupdfsoi', 'esfcfsoi']
     steps = steps + efsoi_steps if _base.get('DO_EFSOI','NO') == 'YES' else steps
     # ===================================================
 
@@ -318,13 +318,13 @@ def get_hyb_resources(dict_configs):
     if lobsdiag_forenkf in ['.T.', '.TRUE.']:
 
         if do_efsoi in ['Y', 'YES']:
-            tasks1 = ['eobs', 'ediag', 'eupd','eupdfsoi']
+            tasks1 = ['eobs', 'ediag', 'eupd', 'eupdfsoi', 'esfcfsoi']
         else:
             tasks1 = ['eobs', 'ediag', 'eupd']
 
     else:
         if do_efsoi in ['Y', 'YES']:
-            tasks1 = ['eobs', 'eomg', 'eupd','eupdfsoi']
+            tasks1 = ['eobs', 'eomg',  'eupd', 'eupdfsoi', 'esfcfsoi']
         else:
             tasks1 = ['eobs', 'eomg', 'eupd']
     # =====================================================
@@ -894,7 +894,27 @@ def get_hyb_tasks(dict_configs, cycledef='enkf'):
 
     dict_tasks['%sesfc' % cdump] = task
 
+    # === Edited by liaofan on 2020.05.18 ======================
+    # esfcfsoi
+    deps1 = []
+    data = '&ROTDIR;/%s.@Y@m@d/@H/%s.t@Hz.loganl.txt' % (cdump, cdump)
+    dep_dict = {'type': 'data', 'data': data}
+    deps1.append(rocoto.add_dependency(dep_dict))
+    dep_dict = {'type': 'task', 'name': '%sanalcalc' % cdump}
+    deps1.append(rocoto.add_dependency(dep_dict))
+    dependencies1 = rocoto.create_dependency(dep_condition='or', dep=deps1)
 
+    deps2 = []
+    deps2 = dependencies1
+    dep_dict = {'type': 'task', 'name': '%seupdfsoi' % cdump_eupd}
+    deps2.append(rocoto.add_dependency(dep_dict))
+    dependencies2 = rocoto.create_dependency(dep_condition='and', dep=deps2)
+    task = wfu.create_wf_task('esfcfsoi', cdump=cdump, envar=envars1, dependency=dependencies2, cycledef=cycledef)
+
+    dict_tasks['%sesfcfsoi' % cdump] = task
+    # ==========================================================
+    
+    
     # efmn, efcs
     deps1 = []
     dep_dict = {'type': 'metatask', 'name': '%secmn' % cdump}
@@ -1142,7 +1162,7 @@ def create_xml(dict_configs):
         do_efsoi = base.get('DO_EFSOI', 'NO').upper()
     
         if do_efsoi in ['Y', 'YES']:
-            hyp_tasks = {'gdaseobs':'gdaseobs', 'gdasediag':'gdasediag', 'gdaseomg':'gdaseomn', 'gdaseupd':'gdaseupd','gdaseupdfsoi':'gdaseupdfsoi','gdasecen':'gdasecmn','gdasesfc':'gdasesfc','gdasefcs':'gdasefmn','gdasepos':'gdasepmn','gdasearc':'gdaseamn'}
+            hyp_tasks = {'gdaseobs':'gdaseobs', 'gdasediag':'gdasediag', 'gdaseomg':'gdaseomn', 'gdaseupd':'gdaseupd','gdaseupdfsoi':'gdaseupdfsoi','gdasecen':'gdasecmn','gdasesfc':'gdasesfc','gdasesfcfsoi':'gdasesfcfsoi','gdasefcs':'gdasefmn','gdasepos':'gdasepmn','gdasearc':'gdaseamn'}
 
         else:
             hyp_tasks = {'gdaseobs':'gdaseobs', 'gdasediag':'gdasediag', 'gdaseomg':'gdaseomn', 'gdaseupd':'gdaseupd','gdasecen':'gdasecmn','gdasesfc':'gdasesfc','gdasefcs':'gdasefmn','gdasepos':'gdasepmn','gdasearc':'gdaseamn'}

@@ -30,7 +30,13 @@ There are the following types of files:
       * jobs/JGDAS_EFSOI_SURFACE
       * scripts/exglobal_efsoi_surface_fv3gfs.sh.ecf
       * parm/config/config.esfcfsoi
-   
+
+   for gdasecenfsoi
+      * jobs/rocoto/ecenfsoi.sh
+      * jobs/JGDAS_EFSOI_RECENTER
+      * scripts/exglobal_efsoi_recenter_fv3gfs.sh.ecf
+      * parm/config/config.ecenfsoi
+         
 (3) Files that exist and are updated for EFSOI and then git-pushed
 
    * env/HERA.env
@@ -45,13 +51,5 @@ There are the following types of files:
    
 (5) Note (done for esfcfsoi), to be pushed
 
-   for gdasecenfsoi
-      * jobs/rocoto/esfcfsoi.sh
-      * jobs/JGDAS_EFSOI_RECENTER
-      * scripts/exglobal_efsoi_recenter_fv3gfs.sh.ecf
-      * parm/config/config.esfcfsoi
 
-   * env/HERA.env
-   * parm/config/config.resources 
-   * ush/rocoto/setup_workflow.py 
    

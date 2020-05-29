@@ -180,15 +180,28 @@ fi
 
 #-------------------------------------------------------
 # member directory
+# ===== Edited by liaofan on 2020.05.27 =================
+EFSOI_STR_FCST=${EFSOI_STR_FCST:-"NO"}
+
 if [ $MEMBER -lt 0 ]; then
   prefix=$CDUMP
   rprefix=$rCDUMP
   memchar=""
 else
-  prefix=enkf$CDUMP
-  rprefix=enkf$rCDUMP
+  # liaofan:
+  #    - prefix is for the current cycle
+  #    - rprefix is for the previous cycle	
+  if [ $EFSOI_STR_FCST = "YES" ] ; then
+    prefix=fsoi$CDUMP
+    rprefix=enkf$rCDUMP  
+  else
+    prefix=enkf$CDUMP
+    rprefix=enkf$rCDUMP
+  fi
   memchar=mem$(printf %03i $MEMBER)
 fi
+# ========================================================
+
 memdir=$ROTDIR/${prefix}.$PDY/$cyc/$memchar
 if [ ! -d $memdir ]; then mkdir -p $memdir; fi
 
@@ -222,6 +235,8 @@ res_latlon_dynamics="''"
 if [ -f $gmemdir/RESTART/${sPDY}.${scyc}0000.coupler.res ]; then
   export warm_start=".true."
 fi
+
+
 
 # turn IAU off for cold start
 DOIAU_coldstart=${DOIAU_coldstart:-"NO"}
@@ -1329,6 +1344,19 @@ if [ $SEND = "YES" ]; then
   fi
 
 fi
+
+#------------------------------------------------------------------
+# This is to keep the working folder
+echo "=== edited by liaofan (2020.04.12) ======="
+pwd
+
+cd $DATA
+cd ../../..
+mkdir -p ${CDATE}_liaofan
+mkdir -p ${CDATE}_liaofan/${CDUMP}
+cp -ir $DATA ${DATA}_liaofan_from_exglobal_fcst_nemsfv3gfs_sh_ecf
+cp -u -ir ${CDATE}/${CDUMP}/*_liaofan_from_exglobal_fcst_nemsfv3gfs_sh_ecf ${CDATE}_liaofan/${CDUMP}/
+echo "========================================="
 
 #------------------------------------------------------------------
 # Clean up before leaving

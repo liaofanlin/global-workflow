@@ -346,6 +346,16 @@ elif [ $step = "efcs" ]; then
     export npe_node_efcs=$(echo "$npe_node_max / $nth_efcs" | bc)
     if [[ "$machine" == "WCOSS_C" ]]; then export memory_efcs="254M"; fi
 
+# === Edited by liaofan on 2020.05.26 ================
+elif [ $step = "efcsfsoi" ]; then
+
+    export wtime_efcsfsoi="03:00:00"
+    export npe_efcsfsoi=$(echo "$layout_x * $layout_y * 6" | bc)
+    export nth_efcsfsoi=${nth_fv3:-2}
+    export npe_node_efcsfsoi=$(echo "$npe_node_max / $nth_efcsfsoi" | bc)
+    if [[ "$machine" == "WCOSS_C" ]]; then export memory_efcsfsoi="254M"; fi
+# ====================================================			
+			
 elif [ $step = "epos" ]; then
 
     export wtime_epos="03:00:00"

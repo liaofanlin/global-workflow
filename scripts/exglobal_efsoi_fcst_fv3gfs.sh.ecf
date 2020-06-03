@@ -120,11 +120,21 @@ export layout_y=${layout_y_ENKF:-${layout_y:-16}}
 export LEVS=${LEVS_ENKF:-${LEVS:-64}}
 
 # nggps_diag_nml
-export FHOUT=${FHOUT_ENKF:-3}
+# --------------
+# Edited by liaofan on 2020.06.01
+# Force EFSOI to run output the forecast with the lead times of 0, 6, 12, 18, 24, & 30
+#export FHOUT=${FHOUT_ENKF:-3}
+export FHOUT=${FHOUT_EFSOI:-6}
+export FHMIN=0
 
 # model_configure
+# ---------------
 export DELTIM=${DELTIM_ENKF:-${DELTIM:-225}}
-export FHMAX=${FHMAX_ENKF:-9}
+
+# Edited by liaofan on 2020.06.01
+#export FHMAX=${FHMAX_ENKF:-9}
+export FHMAX=${FHMAX_EFSOI:-30}
+
 export restart_interval=${restart_interval_ENKF:-${restart_interval:-6}}
 
 # gfs_physics_nml
@@ -136,7 +146,11 @@ export IAER=${IAER_ENKF:-${IAER:-111}}
 export ICO2=${ICO2_ENKF:-${ICO2:-2}}
 export cdmbgwd=${cdmbgwd_ENKF:-${cdmbgwd:-"3.5,0.25"}}
 export dspheat=${dspheat_ENKF:-${dspheat:-".true."}}
-export shal_cnv=${shal_cnv_ENKF:-${shal_cnv:-".true."}}
+
+# Edited by liaofan on 2020.06.01
+#export shal_cnv=${shal_cnv_ENKF:-${shal_cnv:-".true."}}
+export shal_cnv=${shal_cnv_ENKF:-${shal_cnv:-".false."}}
+
 export FHZER=${FHZER_ENKF:-${FHZER:-6}}
 export FHCYC=${FHCYC_ENKF:-${FHCYC:-6}}
 
@@ -169,6 +183,7 @@ for imem in $(seq $ENSBEG $ENSEND); do
       [[ $memstat -eq 1 ]] && skip_mem="YES"
    fi
 
+   # Running FV3GFS (liaofan on 2020.06.01)
    if [ $skip_mem = "NO" ]; then
 
       ra=0
@@ -190,6 +205,7 @@ for imem in $(seq $ENSBEG $ENSEND); do
 
    fi
 
+ 
    if [ $SENDDBN = YES ]; then
      fhr=$FHOUT
      while [ $fhr -le $FHMAX ]; do

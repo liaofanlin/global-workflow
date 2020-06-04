@@ -65,7 +65,7 @@ def main():
     #steps = steps + wav_steps_awips if _base.get('DO_AWIPS', 'NO') == 'YES' else steps
 
     # ==== added by liaofan for efsoi on 2020.05.04 =====
-    efsoi_steps = ['eupdfsoi', 'esfcfsoi', 'ecenfsoi', 'efcsfsoi']
+    efsoi_steps = ['eupdfsoi', 'esfcfsoi', 'ecenfsoi', 'efcsfsoi', 'eposfsoi']
     steps = steps + efsoi_steps if _base.get('DO_EFSOI','NO') == 'YES' else steps
     # ===================================================
 
@@ -364,7 +364,7 @@ def get_hyb_resources(dict_configs):
     do_efsoi = base.get('DO_EFSOI', 'NO').upper()
         
     if do_efsoi in ['Y', 'YES']:
-        tasks2 = ['ecen', 'ecenfsoi', 'esfc', 'esfcfsoi', 'efcs', 'efcsfsoi', 'epos', 'earc']
+        tasks2 = ['ecen', 'ecenfsoi', 'esfc', 'esfcfsoi', 'efcs', 'efcsfsoi', 'epos', 'eposfsoi', 'earc']
     else:    
         tasks2 = ['ecen', 'esfc', 'efcs', 'epos', 'earc']
     # ====================================================
@@ -973,7 +973,7 @@ def get_hyb_tasks(dict_configs, cycledef='enkf'):
     dict_tasks['%sefmn' % cdump] = task
 
     # === Edited by liaofan on 2020.05.18 ======================
-    # efmnfsoi, efcsfspo
+    # efmnfsoi, efcsfsoi
     deps1 = []
     dep_dict = {'type': 'metatask', 'name': '%secmnfsoi' % cdump}
     deps1.append(rocoto.add_dependency(dep_dict))
@@ -1013,6 +1013,26 @@ def get_hyb_tasks(dict_configs, cycledef='enkf'):
                               metatask='epmn', varname=varname1, varval=varval1, vardict=vardict)
 
     dict_tasks['%sepmn' % cdump] = task
+
+    # === Edited by liaofan on 2020.06.03 ======================
+    # epmnfsoi, eposfsoi
+    deps = []
+    dep_dict = {'type': 'metatask', 'name': '%sefmnfsoi' % cdump}
+    deps.append(rocoto.add_dependency(dep_dict))
+    dependencies = rocoto.create_dependency(dep=deps)
+    fhrgrp = rocoto.create_envar(name='FHRGRP', value='#grp#')
+    fhrlst = rocoto.create_envar(name='FHRLST', value='#lst#')
+    eposenvars = envars1 + [fhrgrp] + [fhrlst]
+    varname1, varname2, varname3 = 'grp', 'dep', 'lst'
+    varval1, varval2, varval3 = get_eposfsoigroups(dict_configs['eposfsoi'], cdump=cdump)
+    vardict = {varname2: varval2, varname3: varval3}
+    task = wfu.create_wf_task('eposfsoi', cdump=cdump, envar=eposenvars, dependency=dependencies,
+                              metatask='epmnfsoi', varname=varname1, varval=varval1, vardict=vardict)
+
+    dict_tasks['%sepmnfsoi' % cdump] = task
+    # ==========================================================
+    
+    
 
     # eamn, earc
     deps = []
@@ -1179,6 +1199,29 @@ def get_eposgroups(epos, cdump='gdas'):
 
     return fhrgrp, fhrdep, fhrlst
 
+# === Added by liaofan on 2020.06.03 ===
+def get_eposfsoigroups(epos, cdump='gdas'):
+
+    fhmin = 0
+    fhmax = 30
+    fhout = 6
+    
+    fhrs = range(fhmin, fhmax+fhout, fhout)
+
+    neposgrp = epos['NEPOSGRP']
+    ngrps = neposgrp if len(fhrs) > neposgrp else len(fhrs)
+
+    fhrs = ['f%03d' % f for f in fhrs]
+    fhrs = np.array_split(fhrs, ngrps)
+    fhrs = [f.tolist() for f in fhrs]
+
+    fhrgrp = ' '.join(['%03d' % x for x in range(0, ngrps)])
+    fhrdep = ' '.join([f[-1] for f in fhrs])
+    fhrlst = ' '.join(['_'.join(f) for f in fhrs])
+
+    return fhrgrp, fhrdep, fhrlst
+# ======================================
+
 
 def dict_to_strings(dict_in):
 
@@ -1227,10 +1270,11 @@ def create_xml(dict_configs):
         if do_efsoi in ['Y', 'YES']:
             hyp_tasks = {'gdaseobs':'gdaseobs', 'gdasediag':'gdasediag', \
                          'gdaseomg':'gdaseomn', 'gdaseupd':'gdaseupd','gdaseupdfsoi':'gdaseupdfsoi', \
-                         'gdasecen':'gdasecmn', 'gdasecenfsoi':'gdasecmnfsoi',\
-                         'gdasesfc':'gdasesfc', 'gdasesfcfsoi':'gdasesfcfsoi',\
-                         'gdasefcs':'gdasefmn', 'gdasefcsfsoi':'gdasefmnfsoi',\
-                         'gdasepos':'gdasepmn', 'gdasearc':'gdaseamn'}
+                         'gdasecen':'gdasecmn', 'gdasecenfsoi':'gdasecmnfsoi', \
+                         'gdasesfc':'gdasesfc', 'gdasesfcfsoi':'gdasesfcfsoi', \
+                         'gdasefcs':'gdasefmn', 'gdasefcsfsoi':'gdasefmnfsoi', \
+                         'gdasepos':'gdasepmn', 'gdaseposfsoi':'gdasepmnfsoi', \
+                         'gdasearc':'gdaseamn'}
 
         else:
             hyp_tasks = {'gdaseobs':'gdaseobs', 'gdasediag':'gdasediag', \
@@ -1238,7 +1282,8 @@ def create_xml(dict_configs):
                          'gdasecen':'gdasecmn',\
                          'gdasesfc':'gdasesfc',\
                          'gdasefcs':'gdasefmn',\
-                         'gdasepos':'gdasepmn', 'gdasearc':'gdaseamn'}
+                         'gdasepos':'gdasepmn',\
+                         'gdasearc':'gdaseamn'}
         # ==================================================
 
         for each_task, each_resource_string in dict_hyb_resources.iteritems():

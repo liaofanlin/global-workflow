@@ -365,6 +365,17 @@ elif [ $step = "epos" ]; then
     export npe_node_epos=$(echo "$npe_node_max / $nth_epos" | bc)
     if [[ "$machine" == "WCOSS_C" ]]; then export memory_epos="254M"; fi
 
+# === Edited by liaofan on 2020.06.03 ================
+elif [ $step = "eposfsoi" ]; then
+
+    export wtime_eposfsoi="03:00:00"
+    export npe_eposfsoi=80
+    export nth_eposfsoi=6
+    if [[ "$machine" = "WCOSS_DELL_P3" ]]; then export nth_eposfsoi=7; fi
+    export npe_node_eposfsoi=$(echo "$npe_node_max / $nth_eposfsoi" | bc)
+    if [[ "$machine" == "WCOSS_C" ]]; then export memory_eposfsoi="254M"; fi
+# ====================================================	
+
 elif [ $step = "postsnd" ]; then
 
     export wtime_postsnd="02:00:00"

@@ -2,7 +2,7 @@
 Note for EFSOI
 ==========================================================
 
-2020.05.15 (Liaofan Lin)
+2020.06.05 (Liaofan Lin)
 
 There are the following types of files: 
    1) exists and is updated for general purposes and then git-pushed; 
@@ -35,18 +35,18 @@ There are the following types of files:
       * jobs/rocoto/ecenfsoi.sh
       * jobs/JGDAS_EFSOI_RECENTER
       * scripts/exglobal_efsoi_recenter_fv3gfs.sh.ecf
-	  * parm/config/config.ecenfsoi
+      * parm/config/config.ecenfsoi
  
    for gdasefcsfsoi
       * jobs/rocoto/efcsfsoi.sh
       * jobs/JGDAS_EFSOI_FCST
-	  * scripts/exglobal_efsoi_fcst_fv3gfs.sh.ecf
+      * scripts/exglobal_efsoi_fcst_fv3gfs.sh.ecf
       * parm/config/config.efcsfsoi
 
    for gdaseposfsoi
       * jobs/rocoto/eposfsoi.sh
       * jobs/JGDAS_EFSOI_POST
-	  * scripts/exglobal_efsoi_post_fv3gfs.sh.ecf
+      * scripts/exglobal_efsoi_post_fv3gfs.sh.ecf
       * parm/config/config.eposfsoi
 	                 
 (3) Files that exist and are updated for EFSOI and then git-pushed

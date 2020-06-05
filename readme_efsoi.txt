@@ -42,7 +42,13 @@ There are the following types of files:
       * jobs/JGDAS_EFSOI_FCST
 	  * scripts/exglobal_efsoi_fcst_fv3gfs.sh.ecf
       * parm/config/config.efcsfsoi
-               
+
+   for gdaseposfsoi
+      * jobs/rocoto/eposfsoi.sh
+      * jobs/JGDAS_EFSOI_POST
+	  * scripts/exglobal_efsoi_post_fv3gfs.sh.ecf
+      * parm/config/config.eposfsoi
+	                 
 (3) Files that exist and are updated for EFSOI and then git-pushed
 
    for all EFSOI tasks
@@ -60,5 +66,9 @@ There are the following types of files:
    * scripts/exglobal_enkf_recenter_fv3gfs.sh.ecf
    * scripts/exglobal_enkf_fcst_fv3gfs.sh.ecf
    
-(5) Note (done for esfcfsoi), to be pushed
+(5) Note, to be pushed
 
+	  
+   
+	  
+	  
